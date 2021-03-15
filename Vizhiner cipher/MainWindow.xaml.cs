@@ -13,15 +13,17 @@ namespace Vizhiner_cipher
             EnglishAlphabet = "abcdefghijklmnopqrstuvwxyz";
 
     }
-    
     public partial class MainWindow : Window
     {
+        public const int RussianLanguageIndex = 0,
+            EnglishLanguageIndex = 1;
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private string Encrypt(string text, string keyword, string alphabet)
+        private static string Encrypt(string text, string keyword, string alphabet)
         {
             string result = "";
             int lastKeyChar = 0;
@@ -63,14 +65,47 @@ namespace Vizhiner_cipher
 
         private void KeywordTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !Chars.EnglishAlphabet.Contains(e.Text);
+            if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            {
+                e.Handled = !Chars.RussianAlphabet.Contains(e.Text);
+            }
+            else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            {
+                e.Handled = !Chars.EnglishAlphabet.Contains(e.Text);
+            }
+
             if (!e.Handled)
             {
                 EncryptedTextBox.IsReadOnly = false;
                 OriginalTextBox.IsReadOnly = false;
             }
-            EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
-            DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
+            else
+            {
+                MessageBox.Show("Ensure that you selected a correct language");
+            }
+        }
+
+        private void KeywordTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(KeywordTextBox.Text.Length == 0)
+            {
+                EncryptedTextBox.IsReadOnly = true;
+                OriginalTextBox.IsReadOnly = true;
+                EncryptedTextBox.Text = "";
+                OriginalTextBox.Text = "";
+                DecryptedTextBox.Text = "";
+            }
+
+            if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            {
+                EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
+                DecryptedTextBox.Text = Decrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
+            }
+            else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            {
+                EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
+                DecryptedTextBox.Text = Decrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
+            }
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -94,6 +129,30 @@ namespace Vizhiner_cipher
             {
                 OriginalTextBox.Text = "";
                 OriginalTextBox.IsReadOnly = true;
+            }
+        }
+
+        private void OriginalTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            {
+                EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
+            }
+            else if(LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            {
+                EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
+            }
+        }
+
+        private void EncryptedTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            {
+                DecryptedTextBox.Text = Decrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
+            }
+            else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            {
+                DecryptedTextBox.Text = Decrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
             }
         }
     }
