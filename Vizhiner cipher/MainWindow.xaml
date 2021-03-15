@@ -39,9 +39,9 @@
                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Margin="7"/>
 
         <TextBox Name="OriginalTextBox" Margin="7" FontSize="18" Grid.Row="3" Grid.Column="0" AcceptsReturn="True"
-                   PreviewTextInput="OriginalTextBox_PreviewTextInput" TextWrapping="Wrap" IsReadOnly='True'/>
+                   TextWrapping="Wrap" IsReadOnly='True'/>
         <TextBox Name="EncryptedTextBox" Margin="7" FontSize="18" Grid.Row="3" Grid.Column="1" AcceptsReturn="True"
-                   PreviewTextInput="EncryptedTextBox_PreviewTextInput" TextWrapping="Wrap" IsReadOnly='True'/>
+                   TextWrapping="Wrap" IsReadOnly='True'/>
         <TextBox Name="DecryptedTextBox" Margin="7" FontSize="18" Grid.Row="3" Grid.Column="2" AcceptsReturn="True"
                  TextWrapping="Wrap" IsReadOnly="True"/>
     </Grid>
