@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace Vizhiner_cipher
 {
@@ -16,6 +17,18 @@ namespace Vizhiner_cipher
             EnglishAlphabet = "abcdefghijklmnopqrstuvwxyz";
 
     }
+    class HeightParams
+    {
+        public double fromHeight, toHeight;
+        public TextBox animatedTextBox;
+        public int duration, frames;
+    }
+    class MarginParams
+    {
+        public Thickness fromMargin;
+        public TextBox animatedTextBox;
+        public int duration, frames;
+    }
     public partial class MainWindow : Window
     {
         public const int RussianLanguageIndex = 0,
@@ -24,24 +37,57 @@ namespace Vizhiner_cipher
         public MainWindow()
         {
             InitializeComponent();
-            MarginAnimation(new Thickness(-1000, 7, 1000, 7), OriginalTextBox);
-            MarginAnimation(new Thickness(7, 1000, 7, -1000), EncryptedTextBox);
-            MarginAnimation(new Thickness(1000, 7, -1000, 7), DecryptedTextBox);
-
-            DoubleAnimation KeyWordTextBoxAnimation = new DoubleAnimation();
-            KeyWordTextBoxAnimation.From = 0;
-            KeyWordTextBoxAnimation.To = 36;
-            KeyWordTextBoxAnimation.Duration = TimeSpan.FromSeconds(2);
-            KeywordTextBox.BeginAnimation(TextBox.HeightProperty, KeyWordTextBoxAnimation);
+            //MarginAnimation(new Thickness(-1000, 7, 1000, 7), OriginalTextBox);
+            //MarginAnimation(new Thickness(7, 1000, 7, -1000), EncryptedTextBox);
+            //MarginAnimation(new Thickness(1000, 7, -1000, 7), DecryptedTextBox);
+            Thread KeywordTextBoxAnimation = new(new ParameterizedThreadStart(HeightAnimation));
+            HeightParams heightParams = new HeightParams()
+            {
+                fromHeight = 0,
+                toHeight = 36,
+                animatedTextBox = KeywordTextBox,
+                duration = 2,
+                frames = 120
+            };
+            KeywordTextBoxAnimation.Start(heightParams);
         }
 
-        private void MarginAnimation(Thickness fromMargin, TextBox animatedTextBox)
+        private void MarginAnimation(object marginParams)
         {
-            ThicknessAnimation TextBoxAnimation = new ThicknessAnimation();
-            TextBoxAnimation.From = fromMargin;
-            TextBoxAnimation.To = animatedTextBox.Margin;
-            TextBoxAnimation.Duration = TimeSpan.FromSeconds(2);
-            animatedTextBox.BeginAnimation(TextBox.MarginProperty, TextBoxAnimation);
+            MarginParams mparams = (MarginParams)marginParams;
+            Thickness toMargin = mparams.animatedTextBox.Margin;
+            double sleepMilliseconds = (mparams.duration * 1000) / mparams.frames;
+
+            Dispatcher.Invoke(() =>
+            {
+                mparams.animatedTextBox.Margin = mparams.fromMargin;
+                for(int i = 0; i < mparams.frames; i++)
+                {
+                    Thickness temp = mparams.animatedTextBox.Margin;
+                    temp.Left += (toMargin.Left - mparams.fromMargin.Left) / mparams.frames;
+                    temp.Right += (toMargin.Right - mparams.fromMargin.Right) / mparams.frames;
+                    temp.Bottom += (toMargin.Bottom - mparams.fromMargin.Bottom) / mparams.frames;
+                    temp.Top += (toMargin.Top - mparams.fromMargin.Top) / mparams.frames;
+                    mparams.animatedTextBox.Margin = temp;
+                    Thread.Sleep((int)sleepMilliseconds);
+                }
+            }, DispatcherPriority.Background);
+        }
+
+        private void HeightAnimation(object heightParams)
+        {
+            HeightParams hparams = (HeightParams)heightParams;
+            double sleepMilliseconds = (hparams.duration * 1000) / hparams.frames;
+            double step = (hparams.toHeight - hparams.fromHeight) / hparams.frames;
+            Dispatcher.Invoke(() =>
+                {
+                    hparams.animatedTextBox.Height = hparams.fromHeight;
+                    for (int i = 0; i < hparams.frames; i++)
+                    {
+                        hparams.animatedTextBox.Height += step;
+                        Thread.Sleep((int)sleepMilliseconds);
+                    }
+                }, DispatcherPriority.Background);
         }
 
         private static string Encrypt(string text, string keyword, string alphabet)
