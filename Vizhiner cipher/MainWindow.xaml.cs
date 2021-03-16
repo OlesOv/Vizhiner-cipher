@@ -37,29 +37,56 @@ namespace Vizhiner_cipher
         public MainWindow()
         {
             InitializeComponent();
-            //MarginAnimation(new Thickness(-1000, 7, 1000, 7), OriginalTextBox);
-            //MarginAnimation(new Thickness(7, 1000, 7, -1000), EncryptedTextBox);
-            //MarginAnimation(new Thickness(1000, 7, -1000, 7), DecryptedTextBox);
             Thread KeywordTextBoxAnimation = new(new ParameterizedThreadStart(HeightAnimation));
             HeightParams heightParams = new HeightParams()
             {
-                fromHeight = 0,
+                fromHeight = 20,
                 toHeight = 36,
                 animatedTextBox = KeywordTextBox,
                 duration = 2,
                 frames = 120
             };
             KeywordTextBoxAnimation.Start(heightParams);
+
+            Thread OriginalTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
+            MarginParams originalTextBoxMarginParams = new MarginParams()
+            {
+                fromMargin = new Thickness(-1000, 7, 1000, 7),
+                duration = 2,
+                frames = 120,
+                animatedTextBox = OriginalTextBox
+            };
+            OriginalTextBoxAnimation.Start(originalTextBoxMarginParams);
+
+            Thread EncryptedTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
+            MarginParams encryptedTextBoxMarginParams = new MarginParams()
+            {
+                fromMargin = new Thickness(7, 1000, 7, -1000),
+                duration = 2,
+                frames = 120,
+                animatedTextBox = OriginalTextBox
+            };
+            EncryptedTextBoxAnimation.Start(encryptedTextBoxMarginParams);
+
+            Thread DecryptedTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
+            MarginParams decryptedTextBoxMarginParams = new MarginParams()
+            {
+                fromMargin = new Thickness(1000, 7, -1000, 7),
+                duration = 2,
+                frames = 120,
+                animatedTextBox = OriginalTextBox
+            };
+            DecryptedTextBoxAnimation.Start(decryptedTextBoxMarginParams);
         }
 
         private void MarginAnimation(object marginParams)
         {
             MarginParams mparams = (MarginParams)marginParams;
-            Thickness toMargin = mparams.animatedTextBox.Margin;
             double sleepMilliseconds = (mparams.duration * 1000) / mparams.frames;
 
             Dispatcher.Invoke(() =>
             {
+                Thickness toMargin = mparams.animatedTextBox.Margin;
                 mparams.animatedTextBox.Margin = mparams.fromMargin;
                 for(int i = 0; i < mparams.frames; i++)
                 {
