@@ -26,7 +26,8 @@ namespace Vizhiner_cipher
 
         private static string Encrypt(string text, string keyword, string alphabet)
         {
-            string result = "", originalText = text;
+            char[] result = new char[text.Length];
+            string originalText = text;
             int lastKeyChar = 0;
             text = text.ToLower();
             for (int i = 0; i < text.Length; i++)
@@ -36,27 +37,28 @@ namespace Vizhiner_cipher
                     char temp = alphabet[(alphabet.IndexOf(text[i]) +
                         alphabet.IndexOf(keyword[lastKeyChar % keyword.Length])) % alphabet.Length];
 
-                    if(originalText[i] == char.ToUpper(text[i]))
+                    if (originalText[i] == char.ToUpper(text[i]))
                     {
-                        result += char.ToUpper(temp);
+                        result[i] = char.ToUpper(temp);
                     }
                     else
                     {
-                        result += temp;
+                        result[i] = temp;
                     }
                     lastKeyChar++;
                 }
                 else
                 {
-                    result += text[i];
+                    result[i] = text[i];
                 }
             }
-            return result;
+            return new string(result);
         }
 
         private static string Decrypt(string text, string keyword, string alphabet)
         {
-            string result = "", originalText = text;
+            char[] result = new char[text.Length];
+            string originalText = text;
             int lastKeyChar = 0;
             text = text.ToLower();
             for (int i = 0; i < text.Length; i++)
@@ -68,20 +70,20 @@ namespace Vizhiner_cipher
 
                     if (originalText[i] == char.ToUpper(text[i]))
                     {
-                        result += char.ToUpper(temp);
+                        result[i] = char.ToUpper(temp);
                     }
                     else
                     {
-                        result += temp;
+                        result[i] = temp;
                     }
                     lastKeyChar++;
                 }
                 else
                 {
-                    result += text[i];
+                    result[i] = text[i];
                 }
             }
-            return result;
+            return new string(result);
         }
 
         private void KeywordTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -110,7 +112,7 @@ namespace Vizhiner_cipher
 
         private void KeywordTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if(KeywordTextBox.Text.Length == 0)
+            if (KeywordTextBox.Text.Length == 0)
             {
                 EncryptedTextBox.IsReadOnly = true;
                 OriginalTextBox.IsReadOnly = true;
@@ -159,11 +161,11 @@ namespace Vizhiner_cipher
 
         private void OriginalTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if(LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
             {
                 EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.RussianAlphabet);
             }
-            else if(LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
             {
                 EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.EnglishAlphabet);
             }
