@@ -9,7 +9,7 @@ namespace Vizhiner_cipher
     /// </summary>
     static class Chars
     {
-        public static string RussianAlphabet = "абвгдеёжзийклмнопрстуфхцшщъыьэюя",
+        public static string RussianAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя",
             EnglishAlphabet = "abcdefghijklmnopqrstuvwxyz";
 
     }
@@ -81,7 +81,7 @@ namespace Vizhiner_cipher
             }
             else
             {
-                MessageBox.Show("Ensure that you selected a correct language");
+                MessageBox.Show("Ensure that you selected a correct language and you are writing in a lower-case");
             }
         }
 
@@ -99,12 +99,12 @@ namespace Vizhiner_cipher
             if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
             {
                 EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
-                DecryptedTextBox.Text = Decrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
+                DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
             }
             else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
             {
                 EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
-                DecryptedTextBox.Text = Decrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
+                DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
             }
         }
 
@@ -148,11 +148,11 @@ namespace Vizhiner_cipher
         {
             if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
             {
-                DecryptedTextBox.Text = Decrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
+                DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Chars.RussianAlphabet);
             }
             else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
             {
-                DecryptedTextBox.Text = Decrypt(OriginalTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
+                DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Chars.EnglishAlphabet);
             }
         }
     }
