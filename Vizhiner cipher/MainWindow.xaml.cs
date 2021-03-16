@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace Vizhiner_cipher
 {
@@ -22,6 +24,24 @@ namespace Vizhiner_cipher
         public MainWindow()
         {
             InitializeComponent();
+            MarginAnimation(new Thickness(-1000, 7, 1000, 7), OriginalTextBox);
+            MarginAnimation(new Thickness(7, 1000, 7, -1000), EncryptedTextBox);
+            MarginAnimation(new Thickness(1000, 7, -1000, 7), DecryptedTextBox);
+
+            DoubleAnimation KeyWordTextBoxAnimation = new DoubleAnimation();
+            KeyWordTextBoxAnimation.From = 0;
+            KeyWordTextBoxAnimation.To = 36;
+            KeyWordTextBoxAnimation.Duration = TimeSpan.FromSeconds(2);
+            KeywordTextBox.BeginAnimation(TextBox.HeightProperty, KeyWordTextBoxAnimation);
+        }
+
+        private void MarginAnimation(Thickness fromMargin, TextBox animatedTextBox)
+        {
+            ThicknessAnimation TextBoxAnimation = new ThicknessAnimation();
+            TextBoxAnimation.From = fromMargin;
+            TextBoxAnimation.To = animatedTextBox.Margin;
+            TextBoxAnimation.Duration = TimeSpan.FromSeconds(2);
+            animatedTextBox.BeginAnimation(TextBox.MarginProperty, TextBoxAnimation);
         }
 
         private static string Encrypt(string text, string keyword, string alphabet)
