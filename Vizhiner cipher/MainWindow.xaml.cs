@@ -17,12 +17,14 @@ namespace Vizhiner_cipher
             EnglishAlphabet = "abcdefghijklmnopqrstuvwxyz";
 
     }
+
     class HeightAnimationParams
     {
         public double fromHeight, toHeight;
         public TextBox animatedTextBox;
         public int duration, frames;
     }
+
     class MarginAnimationParams
     {
         public Thickness fromMargin;
@@ -34,13 +36,11 @@ namespace Vizhiner_cipher
         public const int RussianLanguageIndex = 0,
             EnglishLanguageIndex = 1;
 
-        static AutoResetEvent waitHandler = new AutoResetEvent(true);
-
         public MainWindow()
         {
             InitializeComponent();
             Thread KeywordTextBoxAnimation = new(new ParameterizedThreadStart(HeightAnimation));
-            HeightAnimationParams heightParams = new HeightAnimationParams()
+            HeightAnimationParams heightParams = new()
             {
                 fromHeight = 20,
                 toHeight = 36,
@@ -51,17 +51,17 @@ namespace Vizhiner_cipher
             KeywordTextBoxAnimation.Start(heightParams);
 
             Thread OriginalTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginAnimationParams originalTextBoxMarginParams = new MarginAnimationParams()
+            MarginAnimationParams originalTextBoxMarginParams = new()
             {
                 fromMargin = new Thickness(-1000, 7, 1000, 7),
-                duration = 1,
+                duration = 2,
                 frames = 120,
                 animatedTextBox = OriginalTextBox
             };
             OriginalTextBoxAnimation.Start(originalTextBoxMarginParams);
 
             Thread EncryptedTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginAnimationParams encryptedTextBoxMarginParams = new MarginAnimationParams()
+            MarginAnimationParams encryptedTextBoxMarginParams = new()
             {
                 fromMargin = new Thickness(7, 1000, 7, -1000),
                 duration = 2,
@@ -71,10 +71,10 @@ namespace Vizhiner_cipher
             EncryptedTextBoxAnimation.Start(encryptedTextBoxMarginParams);
 
             Thread DecryptedTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginAnimationParams decryptedTextBoxMarginParams = new MarginAnimationParams()
+            MarginAnimationParams decryptedTextBoxMarginParams = new()
             {
                 fromMargin = new Thickness(1000, 7, -1000, 7),
-                duration = 3,
+                duration = 2,
                 frames = 120,
                 animatedTextBox = DecryptedTextBox
             };
