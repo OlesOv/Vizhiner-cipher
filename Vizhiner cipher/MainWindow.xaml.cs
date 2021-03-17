@@ -15,7 +15,8 @@ namespace Vizhiner_cipher
     {
         public const string RussianAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя",
             EnglishAlphabet = "abcdefghijklmnopqrstuvwxyz";
-
+        public const int RussianLanguageIndex = 0,
+            EnglishLanguageIndex = 1;
     }
 
     class HeightAnimationParams
@@ -33,14 +34,12 @@ namespace Vizhiner_cipher
     }
     public partial class MainWindow : Window
     {
-        public const int RussianLanguageIndex = 0,
-            EnglishLanguageIndex = 1;
 
         public MainWindow()
         {
             InitializeComponent();
-            Thread KeywordTextBoxAnimation = new(new ParameterizedThreadStart(HeightAnimation));
-            HeightAnimationParams heightParams = new()
+            Thread KeywordTextBoxAnimation = new(new ParameterizedThreadStart(TextBoxHeightAnimate));
+            HeightAnimationParams KeywordTextBoxAnimationHeightParams = new()
             {
                 fromHeight = 20,
                 toHeight = 36,
@@ -48,40 +47,40 @@ namespace Vizhiner_cipher
                 duration = 2,
                 frames = 120
             };
-            KeywordTextBoxAnimation.Start(heightParams);
+            KeywordTextBoxAnimation.Start(KeywordTextBoxAnimationHeightParams);
 
-            Thread OriginalTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginAnimationParams originalTextBoxMarginParams = new()
+            Thread OriginalTextBoxAnimation = new(new ParameterizedThreadStart(TextBoxMarginAnimate));
+            MarginAnimationParams originalTextBoxAnimationMarginParams = new()
             {
                 fromMargin = new Thickness(-1000, 7, 1000, 7),
                 duration = 2,
                 frames = 120,
                 animatedTextBox = OriginalTextBox
             };
-            OriginalTextBoxAnimation.Start(originalTextBoxMarginParams);
+            OriginalTextBoxAnimation.Start(originalTextBoxAnimationMarginParams);
 
-            Thread EncryptedTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginAnimationParams encryptedTextBoxMarginParams = new()
+            Thread EncryptedTextBoxAnimation = new(new ParameterizedThreadStart(TextBoxMarginAnimate));
+            MarginAnimationParams encryptedTextBoxAnimationMarginParams = new()
             {
                 fromMargin = new Thickness(7, 1000, 7, -1000),
                 duration = 2,
                 frames = 120,
                 animatedTextBox = EncryptedTextBox
             };
-            EncryptedTextBoxAnimation.Start(encryptedTextBoxMarginParams);
+            EncryptedTextBoxAnimation.Start(encryptedTextBoxAnimationMarginParams);
 
-            Thread DecryptedTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginAnimationParams decryptedTextBoxMarginParams = new()
+            Thread DecryptedTextBoxAnimation = new(new ParameterizedThreadStart(TextBoxMarginAnimate));
+            MarginAnimationParams decryptedTextBoxAnimationMarginParams = new()
             {
                 fromMargin = new Thickness(1000, 7, -1000, 7),
                 duration = 2,
                 frames = 120,
                 animatedTextBox = DecryptedTextBox
             };
-            DecryptedTextBoxAnimation.Start(decryptedTextBoxMarginParams);
+            DecryptedTextBoxAnimation.Start(decryptedTextBoxAnimationMarginParams);
         }
 
-        private void MarginAnimation(object marginParams)
+        private void TextBoxMarginAnimate(object marginParams)
         {
             MarginAnimationParams mparams = (MarginAnimationParams)marginParams;
             double sleepMilliseconds = (mparams.duration * 1000) / mparams.frames;
@@ -106,7 +105,7 @@ namespace Vizhiner_cipher
             }
         }
 
-        private void HeightAnimation(object heightParams)
+        private void TextBoxHeightAnimate(object heightParams)
         {
             HeightAnimationParams hparams = (HeightAnimationParams)heightParams;
             double sleepMilliseconds = (hparams.duration * 1000) / hparams.frames;
@@ -189,11 +188,11 @@ namespace Vizhiner_cipher
 
         private void KeywordTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            if (LanguageComboBox.SelectedIndex == Alphabets.RussianLanguageIndex)
             {
                 e.Handled = !Alphabets.RussianAlphabet.Contains(e.Text);
             }
-            else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            else if (LanguageComboBox.SelectedIndex == Alphabets.EnglishLanguageIndex)
             {
                 e.Handled = !Alphabets.EnglishAlphabet.Contains(e.Text);
             }
@@ -211,62 +210,70 @@ namespace Vizhiner_cipher
             }
         }
 
+        private void DisableCipherTextBoxes()
+        {
+            EncryptedTextBox.IsReadOnly = true;
+            OriginalTextBox.IsReadOnly = true;
+            EncryptedTextBox.Background = Brushes.LightGray;
+            OriginalTextBox.Background = Brushes.LightGray;
+            EncryptedTextBox.Text = "";
+            OriginalTextBox.Text = "";
+            DecryptedTextBox.Text = "";
+        }
+
+        private void RussianEncryptAndDecrypt()
+        {
+            EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.RussianAlphabet);
+            DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.RussianAlphabet);
+        }
+
+        private void EnglishEncryptAndDecrypt()
+        {
+            EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.EnglishAlphabet);
+            DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.EnglishAlphabet);
+        }
+
         private void KeywordTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (KeywordTextBox.Text.Length == 0)
             {
-                EncryptedTextBox.IsReadOnly = true;
-                OriginalTextBox.IsReadOnly = true;
-                EncryptedTextBox.Background = Brushes.LightGray;
-                OriginalTextBox.Background = Brushes.LightGray;
-                EncryptedTextBox.Text = "";
-                OriginalTextBox.Text = "";
-                DecryptedTextBox.Text = "";
+                DisableCipherTextBoxes();
             }
 
-            if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            if (LanguageComboBox.SelectedIndex == Alphabets.RussianLanguageIndex)
             {
-                EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.RussianAlphabet);
-                DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.RussianAlphabet);
+                RussianEncryptAndDecrypt();
             }
-            else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            else if (LanguageComboBox.SelectedIndex == Alphabets.EnglishLanguageIndex)
             {
-                EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.EnglishAlphabet);
-                DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.EnglishAlphabet);
+                EnglishEncryptAndDecrypt();
+            }
+        }
+
+        private void EraseAndSetReadOnlyTextBox(TextBox textBox)
+        {
+            if (textBox != null)
+            {
+                textBox.Text = "";
+                textBox.IsReadOnly = true;
             }
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (EncryptedTextBox != null)
-            {
-                EncryptedTextBox.Text = "";
-                EncryptedTextBox.IsReadOnly = true;
-            }
-            if (KeywordTextBox != null)
-            {
-                KeywordTextBox.Text = "";
-            }
-
-            if (DecryptedTextBox != null)
-            {
-                DecryptedTextBox.Text = "";
-            }
-
-            if (OriginalTextBox != null)
-            {
-                OriginalTextBox.Text = "";
-                OriginalTextBox.IsReadOnly = true;
-            }
+            EraseAndSetReadOnlyTextBox(OriginalTextBox);
+            EraseAndSetReadOnlyTextBox(KeywordTextBox);
+            EraseAndSetReadOnlyTextBox(EncryptedTextBox);
+            EraseAndSetReadOnlyTextBox(DecryptedTextBox);
         }
 
         private void OriginalTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            if (LanguageComboBox.SelectedIndex == Alphabets.RussianLanguageIndex)
             {
                 EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.RussianAlphabet);
             }
-            else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            else if (LanguageComboBox.SelectedIndex == Alphabets.EnglishLanguageIndex)
             {
                 EncryptedTextBox.Text = Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.EnglishAlphabet);
             }
@@ -274,11 +281,11 @@ namespace Vizhiner_cipher
 
         private void EncryptedTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (LanguageComboBox.SelectedIndex == RussianLanguageIndex)
+            if (LanguageComboBox.SelectedIndex == Alphabets.RussianLanguageIndex)
             {
                 DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.RussianAlphabet);
             }
-            else if (LanguageComboBox.SelectedIndex == EnglishLanguageIndex)
+            else if (LanguageComboBox.SelectedIndex == Alphabets.EnglishLanguageIndex)
             {
                 DecryptedTextBox.Text = Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.EnglishAlphabet);
             }
