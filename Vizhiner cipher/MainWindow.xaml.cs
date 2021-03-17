@@ -17,13 +17,13 @@ namespace Vizhiner_cipher
             EnglishAlphabet = "abcdefghijklmnopqrstuvwxyz";
 
     }
-    class HeightParams
+    class HeightAnimationParams
     {
         public double fromHeight, toHeight;
         public TextBox animatedTextBox;
         public int duration, frames;
     }
-    class MarginParams
+    class MarginAnimationParams
     {
         public Thickness fromMargin;
         public TextBox animatedTextBox;
@@ -34,11 +34,13 @@ namespace Vizhiner_cipher
         public const int RussianLanguageIndex = 0,
             EnglishLanguageIndex = 1;
 
+        static AutoResetEvent waitHandler = new AutoResetEvent(true);
+
         public MainWindow()
         {
             InitializeComponent();
             Thread KeywordTextBoxAnimation = new(new ParameterizedThreadStart(HeightAnimation));
-            HeightParams heightParams = new HeightParams()
+            HeightAnimationParams heightParams = new HeightAnimationParams()
             {
                 fromHeight = 20,
                 toHeight = 36,
@@ -49,46 +51,49 @@ namespace Vizhiner_cipher
             KeywordTextBoxAnimation.Start(heightParams);
 
             Thread OriginalTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginParams originalTextBoxMarginParams = new MarginParams()
+            MarginAnimationParams originalTextBoxMarginParams = new MarginAnimationParams()
             {
                 fromMargin = new Thickness(-1000, 7, 1000, 7),
-                duration = 2,
+                duration = 1,
                 frames = 120,
                 animatedTextBox = OriginalTextBox
             };
             OriginalTextBoxAnimation.Start(originalTextBoxMarginParams);
 
             Thread EncryptedTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginParams encryptedTextBoxMarginParams = new MarginParams()
+            MarginAnimationParams encryptedTextBoxMarginParams = new MarginAnimationParams()
             {
                 fromMargin = new Thickness(7, 1000, 7, -1000),
                 duration = 2,
                 frames = 120,
-                animatedTextBox = OriginalTextBox
+                animatedTextBox = EncryptedTextBox
             };
             EncryptedTextBoxAnimation.Start(encryptedTextBoxMarginParams);
 
             Thread DecryptedTextBoxAnimation = new(new ParameterizedThreadStart(MarginAnimation));
-            MarginParams decryptedTextBoxMarginParams = new MarginParams()
+            MarginAnimationParams decryptedTextBoxMarginParams = new MarginAnimationParams()
             {
                 fromMargin = new Thickness(1000, 7, -1000, 7),
-                duration = 2,
+                duration = 3,
                 frames = 120,
-                animatedTextBox = OriginalTextBox
+                animatedTextBox = DecryptedTextBox
             };
             DecryptedTextBoxAnimation.Start(decryptedTextBoxMarginParams);
         }
 
         private void MarginAnimation(object marginParams)
         {
-            MarginParams mparams = (MarginParams)marginParams;
+            MarginAnimationParams mparams = (MarginAnimationParams)marginParams;
             double sleepMilliseconds = (mparams.duration * 1000) / mparams.frames;
-
+            Thickness toMargin;
             Dispatcher.Invoke(() =>
             {
-                Thickness toMargin = mparams.animatedTextBox.Margin;
-                mparams.animatedTextBox.Margin = mparams.fromMargin;
-                for(int i = 0; i < mparams.frames; i++)
+                    toMargin = mparams.animatedTextBox.Margin;
+                    mparams.animatedTextBox.Margin = mparams.fromMargin;
+            }, DispatcherPriority.Background);
+            for (int i = 0; i < mparams.frames; i++)
+            {
+                Dispatcher.Invoke(() =>
                 {
                     Thickness temp = mparams.animatedTextBox.Margin;
                     temp.Left += (toMargin.Left - mparams.fromMargin.Left) / mparams.frames;
@@ -96,25 +101,28 @@ namespace Vizhiner_cipher
                     temp.Bottom += (toMargin.Bottom - mparams.fromMargin.Bottom) / mparams.frames;
                     temp.Top += (toMargin.Top - mparams.fromMargin.Top) / mparams.frames;
                     mparams.animatedTextBox.Margin = temp;
-                    Thread.Sleep((int)sleepMilliseconds);
-                }
-            }, DispatcherPriority.Background);
+                }, DispatcherPriority.Background);
+                Thread.Sleep((int)sleepMilliseconds);
+            }
         }
 
         private void HeightAnimation(object heightParams)
         {
-            HeightParams hparams = (HeightParams)heightParams;
+            HeightAnimationParams hparams = (HeightAnimationParams)heightParams;
             double sleepMilliseconds = (hparams.duration * 1000) / hparams.frames;
             double step = (hparams.toHeight - hparams.fromHeight) / hparams.frames;
             Dispatcher.Invoke(() =>
                 {
                     hparams.animatedTextBox.Height = hparams.fromHeight;
-                    for (int i = 0; i < hparams.frames; i++)
-                    {
-                        hparams.animatedTextBox.Height += step;
-                        Thread.Sleep((int)sleepMilliseconds);
-                    }
                 }, DispatcherPriority.Background);
+            for (int i = 0; i < hparams.frames; i++)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    hparams.animatedTextBox.Height += step;
+                }, DispatcherPriority.Background);
+                Thread.Sleep((int)sleepMilliseconds);
+            }
         }
 
         private static string Encrypt(string text, string keyword, string alphabet)
