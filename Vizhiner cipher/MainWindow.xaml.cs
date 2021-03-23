@@ -16,6 +16,7 @@ namespace Vizhiner_cipher
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new ViewModel();
             Animations animations = new()
             {
                 Window = this
@@ -78,7 +79,7 @@ namespace Vizhiner_cipher
             }
             else
             {
-                MessageBox.Show("Ensure that you selected a correct language and that you are writing in a lowercase");
+                MessageBox.Show("Ensure that you are writing using selected language and that you are writing in a lowercase");
             }
         }
 

@@ -4,23 +4,24 @@ using Vizhiner_cipher;
 
 namespace VizhinerCipherTests
 {
+    [TestFixture]
     public class CipherTests
     {
-
-
+        Cipher _cipher;
+        [SetUp]
+        public void SetUp()
+        {
+            _cipher = new Cipher();
+        }
         [TestCase("Карл у Клары украл кораллы", "кларнет", "Хлрь б Пюкьы дшхтц цобнрюё", Alphabets.Russian)]
         [TestCase("Карл у Клары украл кораллы", "а", "Карл у Клары украл кораллы", Alphabets.Russian)]
 
         [TestCase("Just testing something", "a", "Just testing something", Alphabets.English)]
         [TestCase("Just testing something", "test", "Cykm mikmbry lhqwmamfz", Alphabets.English)]
-        public void EncryptingTest(string originalText, string key, string expectedEncryptedText, string alphabet)
+        public void Cipher_Encrypt(string originalText, string key, string expectedEncryptedText, string alphabet)
         {
-            //Arrange
-
-            //Act
-            string encryptedText = Cipher.Encrypt(originalText, key, alphabet);
+            string encryptedText = _cipher.Encrypt(originalText, key, alphabet);
             
-            //Assert
             Assert.AreEqual(expectedEncryptedText, encryptedText);
         }
 
@@ -29,14 +30,10 @@ namespace VizhinerCipherTests
 
         [TestCase("Just testing something", "a", "Just testing something", Alphabets.English)]
         [TestCase("Cykm mikmbry lhqwmamfz", "test", "Just testing something", Alphabets.English)]
-        public void DecryptingTest(string originalText, string key, string expectedDecryptedText, string alphabet)
+        public void Cipher_Decrypt(string originalText, string key, string expectedDecryptedText, string alphabet)
         {
-            //Arrange
+            string decryptedText = _cipher.Decrypt(originalText, key, alphabet);
 
-            //Act
-            string decryptedText = Cipher.Decrypt(originalText, key, alphabet);
-
-            //Assert
             Assert.AreEqual(expectedDecryptedText, decryptedText);
         }
     }

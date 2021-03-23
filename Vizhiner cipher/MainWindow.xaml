@@ -19,7 +19,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <ComboBox Name="LanguageComboBox" SelectedIndex="0" HorizontalContentAlignment="Center" 
+        <ComboBox Name="LanguageComboBox" SelectedIndex="{Binding LanguageCBSelectedItem, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" 
                   VerticalContentAlignment="Center" FontSize="18" Margin="7" Grid.ColumnSpan="2" Grid.Row="0"
                   SelectionChanged="LanguageComboBox_SelectionChanged">
             <ComboBoxItem Content="Russian"/>
@@ -28,7 +28,7 @@
         
         <Label Content="Keyword:" Grid.Row="1" Grid.Column="0" 
                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18"/>
-        <TextBox Name="KeywordTextBox" Margin="7" Grid.ColumnSpan="2" Grid.Row="1" PreviewTextInput="KeywordTextBox_PreviewTextInput"
+        <TextBox Name="KeywordTextBox" Text="{Binding KeywordText, UpdateSourceTrigger = PropertyChanged}" Margin="7" Grid.ColumnSpan="2" Grid.Row="1" PreviewTextInput="KeywordTextBox_PreviewTextInput"
                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Column="1" TextChanged="KeywordTextBox_TextChanged"/>
 
         <Label Content="Original text" Grid.Row="2" Grid.Column="0" 
@@ -38,11 +38,17 @@
         <Label Content="Decrypted text" Grid.Row="2" Grid.Column="2" 
                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Margin="7"/>
 
-        <TextBox Name="OriginalTextBox" Margin="7" FontSize="18" Grid.Row="3" Grid.Column="0" AcceptsReturn="True"
-                   TextChanged="OriginalTextBox_TextChanged" TextWrapping="Wrap" IsReadOnly='True' Background="LightGray"/>
-        <TextBox Name="EncryptedTextBox" Margin="7" FontSize="18" Grid.Row="3" Grid.Column="1" AcceptsReturn="True"
-                   TextChanged="EncryptedTextBox_TextChanged" TextWrapping="Wrap" IsReadOnly='True' Background="LightGray"/>
-        <TextBox Name="DecryptedTextBox" Margin="7" FontSize="18" Grid.Row="3" Grid.Column="2" AcceptsReturn="True"
+        <TextBox Name="OriginalTextBox"
+                 Text="{Binding OriginalText, UpdateSourceTrigger = PropertyChanged}"
+                 Margin="7" FontSize="18" Grid.Row="3" Grid.Column="0" AcceptsReturn="True"
+                 TextWrapping="Wrap" IsReadOnly='True' Background="LightGray"/>
+        <TextBox Name="EncryptedTextBox"
+                 Text="{Binding EncryptedTExt, UpdateSourceTrigger = PropertyChanged}"
+                 Margin="7" FontSize="18" Grid.Row="3" Grid.Column="1" AcceptsReturn="True"
+                 TextWrapping="Wrap" IsReadOnly='True' Background="LightGray"/>
+        <TextBox Name="DecryptedTextBox"
+                 Text="{Binding OriginalText, UpdateSourceTrigger = PropertyChanged}"
+                 Margin="7" FontSize="18" Grid.Row="3" Grid.Column="2" AcceptsReturn="True"
                  TextWrapping="Wrap" IsReadOnly="True" Background="LightGray" />
     </Grid>
 </Window>

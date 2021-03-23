@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace VizhinerCipherTests
 {
+    [TestFixture]
     public class UITests
     {
         [Test]
-        public void DisableTextBoxTest()
+        public void DisableTextBoxes_WhenCalled_DisablesTextBoxes()
         {
 
         }
