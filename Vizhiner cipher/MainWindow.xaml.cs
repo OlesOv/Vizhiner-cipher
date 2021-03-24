@@ -13,10 +13,12 @@ namespace Vizhiner_cipher
     /// </summary>
     public partial class MainWindow : Window
     {
+        ViewModel _viewModel = new ViewModel();
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new ViewModel();
+            DataContext = _viewModel;
+            _viewModel.LanguageCBSelectedIndex = 0;
             Animations animations = new()
             {
                 Window = this
@@ -83,85 +85,15 @@ namespace Vizhiner_cipher
             }
         }
 
-        private void DisableCipherTextBoxes()
+        public void DisableCipherTextBoxes(TextBox originalTextBox, TextBox encryptedTextBox, TextBox decryptedTextBox)
         {
-            EncryptedTextBox.IsReadOnly = true;
-            OriginalTextBox.IsReadOnly = true;
-            EncryptedTextBox.Background = Brushes.LightGray;
-            OriginalTextBox.Background = Brushes.LightGray;
-            EncryptedTextBox.Text = "";
-            OriginalTextBox.Text = "";
-            DecryptedTextBox.Text = "";
-        }
-
-        private void RussianEncryptAndDecrypt()
-        {
-            EncryptedTextBox.Text = Cipher.Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.Russian);
-            DecryptedTextBox.Text = Cipher.Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.Russian);
-        }
-
-        private void EnglishEncryptAndDecrypt()
-        {
-            EncryptedTextBox.Text = Cipher.Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.English);
-            DecryptedTextBox.Text = Cipher.Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.English);
-        }
-
-        private void KeywordTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (KeywordTextBox.Text.Length == 0)
-            {
-                DisableCipherTextBoxes();
-            }
-
-            if (LanguageComboBox.SelectedIndex == (int)Alphabets.LanguageIndexes.Russian)
-            {
-                RussianEncryptAndDecrypt();
-            }
-            else if (LanguageComboBox.SelectedIndex == (int)Alphabets.LanguageIndexes.English)
-            {
-                EnglishEncryptAndDecrypt();
-            }
-        }
-
-        private void EraseAndSetReadOnlyTextBox(TextBox textBox)
-        {
-            if (textBox != null)
-            {
-                textBox.Text = "";
-                textBox.IsReadOnly = true;
-            }
-        }
-
-        private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            EraseAndSetReadOnlyTextBox(OriginalTextBox);
-            EraseAndSetReadOnlyTextBox(KeywordTextBox);
-            EraseAndSetReadOnlyTextBox(EncryptedTextBox);
-            EraseAndSetReadOnlyTextBox(DecryptedTextBox);
-        }
-
-        private void OriginalTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (LanguageComboBox.SelectedIndex == (int)Alphabets.LanguageIndexes.Russian)
-            {
-                EncryptedTextBox.Text = Cipher.Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.Russian);
-            }
-            else if (LanguageComboBox.SelectedIndex == (int)Alphabets.LanguageIndexes.English)
-            {
-                EncryptedTextBox.Text = Cipher.Encrypt(OriginalTextBox.Text, KeywordTextBox.Text, Alphabets.English);
-            }
-        }
-
-        private void EncryptedTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (LanguageComboBox.SelectedIndex == (int)Alphabets.LanguageIndexes.Russian)
-            {
-                DecryptedTextBox.Text = Cipher.Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.Russian);
-            }
-            else if (LanguageComboBox.SelectedIndex == (int)Alphabets.LanguageIndexes.English)
-            {
-                DecryptedTextBox.Text = Cipher.Decrypt(EncryptedTextBox.Text, KeywordTextBox.Text, Alphabets.English);
-            }
+            encryptedTextBox.IsReadOnly = true;
+            originalTextBox.IsReadOnly = true;
+            encryptedTextBox.Background = Brushes.LightGray;
+            originalTextBox.Background = Brushes.LightGray;
+            encryptedTextBox.Text = "";
+            originalTextBox.Text = "";
+            decryptedTextBox.Text = "";
         }
     }
 }

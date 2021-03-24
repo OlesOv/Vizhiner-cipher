@@ -5,17 +5,21 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using Prism.Commands;
 using Prism.Mvvm;
 
 namespace Vizhiner_cipher
 {
     public class ViewModel : BindableBase
     {
+        private readonly Cipher _cipher;
+
         private string _originalText;
         private string _keywordText;
         private string _encryptedText;
         private string _decryptedText;
-        private int _languageCBSelectedIndex;
+        private int _languageCBSelectedIndex = 0;
 
         public string OriginalText
         {
@@ -23,7 +27,10 @@ namespace Vizhiner_cipher
             set
             {
                 _originalText = value;
+                _cipher.OriginalText = value;
                 RaisePropertyChanged("OriginalText");
+                RaisePropertyChanged("EncryptedText");
+                RaisePropertyChanged("DecryptedText");
             }
         }
 
@@ -33,7 +40,10 @@ namespace Vizhiner_cipher
             set
             {
                 _keywordText = value;
+                _cipher.KeywordText = value;
                 RaisePropertyChanged("KeywordText");
+                RaisePropertyChanged("EncryptedText");
+                RaisePropertyChanged("DecryptedText");
             }
         }
 
@@ -43,7 +53,10 @@ namespace Vizhiner_cipher
             set
             {
                 _encryptedText = value;
+                _cipher.EncryptedText = value;
+                
                 RaisePropertyChanged("EncryptedText");
+                RaisePropertyChanged("DecryptedText");
             }
         }
 
@@ -53,6 +66,7 @@ namespace Vizhiner_cipher
             set
             {
                 _decryptedText = value;
+                _cipher.DecryptedText = value;
                 RaisePropertyChanged("DecryptedText");
             }
         }
@@ -63,16 +77,31 @@ namespace Vizhiner_cipher
             set
             {
                 _languageCBSelectedIndex = value;
-                RaisePropertyChanged("LabguageCBSelectedIndex");
+                _cipher.LanguageCBSelectedIndex = value;
+                RaisePropertyChanged("LanguageCBSelectedIndex");
+                RaisePropertyChanged("OriginalText");
+                RaisePropertyChanged("EncryptedText");
+                RaisePropertyChanged("DecryptedText");
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        public ViewModel()
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            _cipher = new Cipher();
+
+            _cipher.PropertyChanged += (s, e) =>
+            {
+                RaisePropertyChanged(e.PropertyName);
+            };
+        }
+
+        public void EraseAndSetReadOnlyTextBox(TextBox textBox)
+        {
+            if (textBox != null)
+            {
+                textBox.Text = "";
+                textBox.IsReadOnly = true;
+            }
         }
     }
 }
