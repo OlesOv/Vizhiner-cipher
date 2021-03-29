@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Prism.Commands;
 using Prism.Mvvm;
 
@@ -13,59 +14,46 @@ namespace Vizhiner_cipher
 {
     public class ViewModel : BindableBase
     {
-        private readonly Cipher _cipher;
-
-        private string _originalText;
-        private string _keywordText;
-        private string _encryptedText;
-        private string _decryptedText;
-        private int _languageCBSelectedIndex = 0;
+        private readonly Cipher _cipher = new Cipher();
 
         public string OriginalText
         {
-            get => _originalText;
+            get => _cipher.OriginalText;
             set
             {
-                _originalText = value;
                 _cipher.OriginalText = value;
                 RaisePropertyChanged("OriginalText");
-                RaisePropertyChanged("EncryptedText");
-                RaisePropertyChanged("DecryptedText");
+                EncryptedText = _cipher.EncryptedText;
             }
         }
 
         public string KeywordText
         {
-            get => _keywordText;
+            get => _cipher.KeywordText;
             set
             {
-                _keywordText = value;
                 _cipher.KeywordText = value;
                 RaisePropertyChanged("KeywordText");
-                RaisePropertyChanged("EncryptedText");
-                RaisePropertyChanged("DecryptedText");
+                EncryptedText = _cipher.EncryptedText;
             }
         }
 
         public string EncryptedText
         {
-            get => _encryptedText;
+            get => _cipher.EncryptedText;
             set
             {
-                _encryptedText = value;
                 _cipher.EncryptedText = value;
-                
                 RaisePropertyChanged("EncryptedText");
-                RaisePropertyChanged("DecryptedText");
+                DecryptedText = _cipher.DecryptedText;
             }
         }
 
         public string DecryptedText
         {
-            get => _decryptedText;
+            get => _cipher.DecryptedText;
             set
             {
-                _decryptedText = value;
                 _cipher.DecryptedText = value;
                 RaisePropertyChanged("DecryptedText");
             }
@@ -73,35 +61,24 @@ namespace Vizhiner_cipher
 
         public int LanguageCBSelectedIndex
         {
-            get => _languageCBSelectedIndex;
+            get => _cipher.LanguageCBSelectedIndex;
             set
             {
-                _languageCBSelectedIndex = value;
                 _cipher.LanguageCBSelectedIndex = value;
                 RaisePropertyChanged("LanguageCBSelectedIndex");
+                KeywordText = "";
+                RaisePropertyChanged("KeywordText");
                 RaisePropertyChanged("OriginalText");
                 RaisePropertyChanged("EncryptedText");
                 RaisePropertyChanged("DecryptedText");
             }
         }
 
-        public ViewModel()
+        public void DisableCipherTextBoxes(TextBox textBox)
         {
-            _cipher = new Cipher();
-
-            _cipher.PropertyChanged += (s, e) =>
-            {
-                RaisePropertyChanged(e.PropertyName);
-            };
-        }
-
-        public void EraseAndSetReadOnlyTextBox(TextBox textBox)
-        {
-            if (textBox != null)
-            {
-                textBox.Text = "";
-                textBox.IsReadOnly = true;
-            }
+            textBox.IsReadOnly = true;
+            textBox.Background = Brushes.LightGray;
+            textBox.Text = "";
         }
     }
 }

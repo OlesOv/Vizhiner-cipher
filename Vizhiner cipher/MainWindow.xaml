@@ -30,7 +30,8 @@
         <TextBox Name="KeywordTextBox" 
                  Text="{Binding KeywordText, UpdateSourceTrigger = PropertyChanged}"
                  Margin="7" Grid.ColumnSpan="2" Grid.Row="1" PreviewTextInput="KeywordTextBox_PreviewTextInput"
-                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Column="1"/>
+                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Column="1"
+                 TextChanged="KeywordTextBox_TextChanged"/>
 
         <Label Content="Original text" Grid.Row="2" Grid.Column="0" 
                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Margin="7"/>

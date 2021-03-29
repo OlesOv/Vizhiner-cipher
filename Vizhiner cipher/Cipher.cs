@@ -4,13 +4,13 @@ using System.Runtime.CompilerServices;
 
 namespace Vizhiner_cipher
 {
-    public class Cipher : BindableBase
+    public class Cipher
     {
         private string _originalText;
         private string _keywordText;
         private string _encryptedText;
         private string _decryptedText;
-        private int _languageCBSelectedIndex;
+        private int _languageCBSelectedIndex = 0;
 
         public string OriginalText
         {
@@ -26,7 +26,6 @@ namespace Vizhiner_cipher
                 {
                     EncryptedText = Encrypt(value, KeywordText, Alphabets.English);
                 }
-                RaisePropertyChanged("OriginalText");
             }
         }
 
@@ -36,7 +35,14 @@ namespace Vizhiner_cipher
             set
             {
                 _keywordText = value;
-                RaisePropertyChanged("KeywordText");
+                if (LanguageCBSelectedIndex == (int)Alphabets.LanguageIndexes.Russian)
+                {
+                    EncryptedText = Encrypt(OriginalText, value, Alphabets.Russian);
+                }
+                else if (LanguageCBSelectedIndex == (int)Alphabets.LanguageIndexes.English)
+                {
+                    EncryptedText = Encrypt(OriginalText, value, Alphabets.English);
+                }
             }
         }
 
@@ -63,7 +69,6 @@ namespace Vizhiner_cipher
             set
             {
                 _decryptedText = value;
-                RaisePropertyChanged("DecryptedText");
             }
         }
 
@@ -73,17 +78,21 @@ namespace Vizhiner_cipher
             set
             {
                 _languageCBSelectedIndex = value;
-                RaisePropertyChanged("LanguageCBSelectedIndex");
             }
         }
 
         public string Encrypt(string text, string keyword, string alphabet)
         {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(keyword)) return "";
             char[] result = text.ToCharArray();
             int lastKeyChar = 0;
             text = text.ToLower();
             for (int i = 0; i < text.Length; i++)
             {
+                if (!alphabet.Contains(text[i]))
+                {
+                    continue;
+                }
                 char currentSymbol = alphabet[(alphabet.IndexOf(text[i]) +
                         alphabet.IndexOf(keyword[lastKeyChar % keyword.Length])) % alphabet.Length];
                 lastKeyChar++;
@@ -99,11 +108,16 @@ namespace Vizhiner_cipher
 
         public string Decrypt(string text, string keyword, string alphabet)
         {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(keyword)) return "";
             char[] result = text.ToCharArray();
             int lastKeyChar = 0;
             text = text.ToLower();
             for (int i = 0; i < text.Length; i++)
             {
+                if (!alphabet.Contains(text[i]))
+                {
+                    continue;
+                }
                 char currentSymbol = alphabet[(alphabet.IndexOf(text[i]) + alphabet.Length -
                     alphabet.IndexOf(keyword[lastKeyChar % keyword.Length])) % alphabet.Length];
                 lastKeyChar++;

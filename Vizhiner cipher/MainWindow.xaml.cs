@@ -85,15 +85,15 @@ namespace Vizhiner_cipher
             }
         }
 
-        public void DisableCipherTextBoxes(TextBox originalTextBox, TextBox encryptedTextBox, TextBox decryptedTextBox)
+        private void KeywordTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            encryptedTextBox.IsReadOnly = true;
-            originalTextBox.IsReadOnly = true;
-            encryptedTextBox.Background = Brushes.LightGray;
-            originalTextBox.Background = Brushes.LightGray;
-            encryptedTextBox.Text = "";
-            originalTextBox.Text = "";
-            decryptedTextBox.Text = "";
+            if(KeywordTextBox.Text == "")
+            {
+                _viewModel.DisableCipherTextBoxes(OriginalTextBox);
+                _viewModel.DisableCipherTextBoxes(EncryptedTextBox);
+                _viewModel.DisableCipherTextBoxes(DecryptedTextBox);
+
+            }
         }
     }
 }

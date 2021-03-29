@@ -14,10 +14,16 @@ namespace VizhinerCipherTests
             _cipher = new Cipher();
         }
         [TestCase("Карл у Клары украл кораллы", "кларнет", "Хлрь б Пюкьы дшхтц цобнрюё", Alphabets.Russian)]
+        [TestCase("Карл у Клары украл кораллы", "", "", Alphabets.Russian)]
+        [TestCase("", "кларнет", "", Alphabets.Russian)]
         [TestCase("Карл у Клары украл кораллы", "а", "Карл у Клары украл кораллы", Alphabets.Russian)]
+        [TestCase("Карл у Клары украл кораллы", "Anything", "Карл у Клары украл кораллы", Alphabets.English)]
 
+        [TestCase("Just testing something", "Anything", "Just testing something", Alphabets.Russian)]
         [TestCase("Just testing something", "a", "Just testing something", Alphabets.English)]
         [TestCase("Just testing something", "test", "Cykm mikmbry lhqwmamfz", Alphabets.English)]
+        [TestCase("Just testing something", "", "", Alphabets.English)]
+        [TestCase("", "test", "", Alphabets.English)]
         public void Cipher_Encrypt(string originalText, string key, string expectedEncryptedText, string alphabet)
         {
             string encryptedText = _cipher.Encrypt(originalText, key, alphabet);
@@ -27,9 +33,15 @@ namespace VizhinerCipherTests
 
         [TestCase("Хлрь б Пюкьы дшхтц цобнрюё", "кларнет", "Карл у Клары украл кораллы", Alphabets.Russian)]
         [TestCase("Карл у Клары украл кораллы", "а", "Карл у Клары украл кораллы", Alphabets.Russian)]
+        [TestCase("Карл у Клары украл кораллы", "", "", Alphabets.Russian)]
+        [TestCase("", "кларнет", "", Alphabets.Russian)]
+        [TestCase("Карл у Клары украл кораллы", "Anything", "Карл у Клары украл кораллы", Alphabets.English)]
 
+        [TestCase("Just testing something", "Anything", "Just testing something", Alphabets.Russian)]
         [TestCase("Just testing something", "a", "Just testing something", Alphabets.English)]
         [TestCase("Cykm mikmbry lhqwmamfz", "test", "Just testing something", Alphabets.English)]
+        [TestCase("", "test", "", Alphabets.English)]
+        [TestCase("Cykm mikmbry lhqwmamfz", "", "", Alphabets.English)]
         public void Cipher_Decrypt(string originalText, string key, string expectedDecryptedText, string alphabet)
         {
             string decryptedText = _cipher.Decrypt(originalText, key, alphabet);
